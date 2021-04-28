@@ -8,7 +8,7 @@ Telegram bot for notifying org events
 
 ### Setup
 
-- If you don't have a telegram bot token yet, create one via `@Botfather`
+- If you don't have a telegram bot token yet, create one via [@botfather](https://t.me/botfather)
 - Set Environment Variables:
 
 ```
