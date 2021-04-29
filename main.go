@@ -37,6 +37,21 @@ func main() {
 	ticker := time.NewTicker(10 * time.Second)
 
 	for update := range updates {
+		userIsAdmin := false
+		chatConfig := update.Message.Chat.ChatConfig()
+		admins, adminErr := bot.GetChatAdministrators(tb.ChatAdministratorsConfig{ChatConfig: chatConfig})
+		if adminErr != nil {
+			continue
+		}
+		for _, admin := range admins {
+			if update.Message.From.ID == admin.User.ID {
+				userIsAdmin = true
+			}
+		}
+		if !userIsAdmin {
+			continue
+		}
+
 		if update.Message.IsCommand() {
 			chatId = update.Message.Chat.ID
 			switch update.Message.Command() {
