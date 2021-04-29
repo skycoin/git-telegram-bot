@@ -1,7 +1,6 @@
 package main
 
 import (
-	"flag"
 	"github.com/Skycoin/git-telegram-bot/config"
 	"github.com/Skycoin/git-telegram-bot/errutil"
 	"github.com/Skycoin/git-telegram-bot/githandler"
@@ -11,23 +10,9 @@ import (
 	"time"
 )
 
-const (
-	defaultConfigPath = "./config.json"
-)
-
-var (
-	cfgPath string
-)
-
 func main() {
-	flag.StringVar(&cfgPath, "c", defaultConfigPath, "config file path in json format")
-	flag.Parse()
-
 	l := log.New(os.Stdout, "skygit-bot", log.LstdFlags)
 
-	if cfgPath == "" {
-		l.Fatal(errutil.ErrNonExistentConfig)
-	}
 	cfg, err := config.NewBotConfig()
 	if err != nil {
 		l.Fatal(err)
