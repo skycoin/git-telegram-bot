@@ -2,8 +2,8 @@ package githandler
 
 import (
 	"encoding/json"
-	"github.com/Skycoin/git-telegram-bot/config"
-	"github.com/Skycoin/git-telegram-bot/errutil"
+	config2 "github.com/Skycoin/git-telegram-bot/internal/config"
+	errutil2 "github.com/Skycoin/git-telegram-bot/pkg/errutil"
 	gh "github.com/google/go-github/v32/github"
 	"io/ioutil"
 	"path/filepath"
@@ -15,7 +15,7 @@ import (
 
 func TestConfigAndFetch(t *testing.T) {
 	r := require.New(t)
-	cases := map[string]*config.BotConfig{
+	cases := map[string]*config2.BotConfig{
 		"notValidUrl": {
 			TgBotToken:   "test",
 			TargetOrgUrl: "5678",
@@ -25,8 +25,8 @@ func TestConfigAndFetch(t *testing.T) {
 			TargetOrgUrl: "https://api.github.com/orgs/skycoin/events",
 		},
 	}
-	expected := map[string]errutil.BotErr{
-		"notValidUrl": errutil.ErrSendingRequest,
+	expected := map[string]errutil2.BotErr{
+		"notValidUrl": errutil2.ErrSendingRequest,
 	}
 	for k, v := range cases {
 		res, err := fetchGhEvent(v.TargetOrgUrl)

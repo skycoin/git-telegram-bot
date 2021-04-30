@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"github.com/Skycoin/git-telegram-bot/errutil"
+	errutil2 "github.com/Skycoin/git-telegram-bot/pkg/errutil"
 	gh "github.com/google/go-github/v32/github"
 	"log"
 	"net/http"
@@ -63,7 +63,7 @@ func HandleStartCommand(
 func handleGithubEvent(curEvt gh.Event) (string, error) {
 	payload, err := curEvt.ParsePayload()
 	if err != nil {
-		return "", errutil.ErrParsePayload.Desc(err)
+		return "", errutil2.ErrParsePayload.Desc(err)
 	}
 
 	var msgText string
@@ -137,7 +137,7 @@ func handleGithubEvent(curEvt gh.Event) (string, error) {
 			evt.GetRelease().GetHTMLURL(),
 		)
 	default:
-		return "", errutil.ErrUnhandledEvent.Desc(curEvt.GetType())
+		return "", errutil2.ErrUnhandledEvent.Desc(curEvt.GetType())
 	}
 	return msgText, nil
 }
@@ -149,17 +149,17 @@ func fetchGhEvent(ghUrl string) ([]gh.Event, error) {
 	}
 	req, err := http.NewRequest(http.MethodGet, ghUrl, nil)
 	if err != nil {
-		return nil, errutil.ErrCreateRequest.Desc(ghUrl, err)
+		return nil, errutil2.ErrCreateRequest.Desc(ghUrl, err)
 	}
 
 	res, err := hc.Do(req)
 	if err != nil {
-		return nil, errutil.ErrSendingRequest.Desc(ghUrl, err)
+		return nil, errutil2.ErrSendingRequest.Desc(ghUrl, err)
 	}
 
 	var ghEvt []gh.Event
 	if err = json.NewDecoder(res.Body).Decode(&ghEvt); err != nil {
-		return nil, errutil.ErrRespBody.Desc(err)
+		return nil, errutil2.ErrRespBody.Desc(err)
 	}
 	_ = res.Body.Close()
 	return ghEvt, nil

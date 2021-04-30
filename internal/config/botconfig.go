@@ -1,7 +1,7 @@
 package config
 
 import (
-	"github.com/Skycoin/git-telegram-bot/errutil"
+	errutil2 "github.com/Skycoin/git-telegram-bot/pkg/errutil"
 	"net/url"
 	"os"
 )
@@ -18,11 +18,11 @@ type BotConfig struct {
 func NewBotConfig() (*BotConfig, error) {
 	botToken := os.Getenv("TG_BOT_TOKEN")
 	if botToken == "" {
-		return nil, errutil.ErrInvalidConfig.Desc("empty bot token")
+		return nil, errutil2.ErrInvalidConfig.Desc("empty bot token")
 	}
 	targetOrgUrl := os.Getenv("TG_BOT_TARGET_ORG_URL")
 	if targetOrgUrl == "" {
-		return nil, errutil.ErrInvalidConfig.Desc("empty target org url")
+		return nil, errutil2.ErrInvalidConfig.Desc("empty target org url")
 	}
 	bc := &BotConfig{
 		TgBotToken:   botToken,
@@ -31,7 +31,7 @@ func NewBotConfig() (*BotConfig, error) {
 
 	u, err := url.Parse(bc.TargetOrgUrl)
 	if err != nil {
-		return nil, errutil.ErrInvalidUrl.Desc(bc.TargetOrgUrl)
+		return nil, errutil2.ErrInvalidUrl.Desc(bc.TargetOrgUrl)
 	}
 	// set url param for per_page item
 	q := u.Query()
