@@ -26,7 +26,7 @@ const (
 func HandleStartCommand(
 	previousEventId string,
 	currentEventId string,
-	l *log.Logger,
+	logger *log.Logger,
 	ghUrl string,
 	sendFunc func(string) error,
 ) error {
@@ -52,7 +52,7 @@ func HandleStartCommand(
 		return err
 	}
 
-	l.Printf("%s sent %s", time.Now().UTC().String(), msgText)
+	logger.Printf("%s sent %s", time.Now().UTC().String(), msgText)
 	if err = sendFunc(msgText); err != nil {
 		return fmt.Errorf("error sending message: %v", err)
 	}
