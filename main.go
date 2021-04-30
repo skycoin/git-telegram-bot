@@ -1,9 +1,9 @@
 package main
 
 import (
-	config2 "github.com/Skycoin/git-telegram-bot/internal/config"
-	errutil2 "github.com/Skycoin/git-telegram-bot/pkg/errutil"
-	githandler2 "github.com/Skycoin/git-telegram-bot/pkg/githandler"
+	"github.com/Skycoin/git-telegram-bot/internal/config"
+	"github.com/Skycoin/git-telegram-bot/pkg/errutil"
+	"github.com/Skycoin/git-telegram-bot/pkg/githandler"
 	tb "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 	"log"
 	"os"
@@ -13,14 +13,14 @@ import (
 func main() {
 	l := log.New(os.Stdout, "skygit-bot", log.LstdFlags)
 
-	cfg, err := config2.NewBotConfig()
+	cfg, err := config.NewBotConfig()
 	if err != nil {
 		l.Fatal(err)
 	}
 
 	bot, err := tb.NewBotAPI(cfg.TgBotToken)
 	if err != nil {
-		l.Fatal(errutil2.ErrCreatingBot.Desc(err))
+		l.Fatal(errutil.ErrCreatingBot.Desc(err))
 	}
 
 	bot.Debug = true
@@ -68,7 +68,7 @@ func main() {
 							ticker.Stop()
 							break
 						case <-ticker.C:
-							if err = githandler2.HandleStartCommand(
+							if err = githandler.HandleStartCommand(
 								previousEventId,
 								currentEventId,
 								l, cfg.TargetOrgUrl,
