@@ -27,8 +27,8 @@ func main() {
 	updateConfig.Timeout = 10
 
 	updates := bot.GetUpdatesChan(updateConfig)
+	chatId := cfg.TargetGroupChatId
 
-	var chatId int64
 	stopCh := make(chan struct{})
 	var previousEventId string
 	var currentEventId string
@@ -51,7 +51,6 @@ func main() {
 		}
 
 		if update.Message.IsCommand() {
-			chatId = update.Message.Chat.ID
 			switch update.Message.Command() {
 			case "start": // starts the poller
 				msg := tb.NewMessage(chatId, "starting Skycoin poll github events...")

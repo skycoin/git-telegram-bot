@@ -14,6 +14,7 @@ Telegram bot for notifying org events
 ```
    export TG_BOT_TOKEN="YOUR BOT TOKEN CREDENTIAL"
    export TG_BOT_TARGET_ORG_URL="YOUR ORG URL example: https://api.github.com/orgs/skycoin/events"
+   export TG_BOT_GROUP_CHAT_ID="YOUR TELEGRAM GROUP ID"
 ```
 
 ### Build
@@ -42,5 +43,35 @@ Run it via
 - Docker:
 
 ```
-docker run --rm -e TG_BOT_TOKEN=<YOUR BOT CREDENTIAL> -e TG_BOT_TARGET_ORG_URL=https://api.github.com/orgs/skycoin/events -it git-telegram-bot:latest
+docker run --rm -e TG_BOT_TOKEN=<YOUR BOT CREDENTIAL> -e TG_BOT_TARGET_ORG_URL=https://api.github.com/orgs/skycoin/events -e TG_BOT_GROUP_CHAT_ID=<YOUR GROUP CHAT ID> -it git-telegram-bot:latest
+```
+
+### Bot Instruction
+
+To operate on the bot, you have to be an administrator to the group you configured to.
+
+To actually run the bot, type:
+
+```
+/start
+```
+
+To stop the bot, type:
+
+```
+/stop
+```
+
+To restart the bot, type:
+
+```bash
+/reset
+# then
+/start
+```
+
+To view its help menu, type:
+
+```
+/help
 ```
