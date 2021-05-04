@@ -44,6 +44,7 @@ func HandleStartCommand(
 	if currentEventId == previousEventId {
 		return previousEventId, nil
 	}
+	previousEventId = currentEventId
 
 	msgText, err := handleGithubEvent(curEvt)
 	if err != nil {
