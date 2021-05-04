@@ -6,14 +6,14 @@ import "fmt"
 type BotErr string
 
 const (
-	ErrInvalidUrl        BotErr = "error parsing target org url %s: invalid url"
-	ErrCreateRequest     BotErr = "error creating request to %s: %v"
-	ErrSendingRequest    BotErr = "error sending request to %s: %v"
-	ErrRespBody          BotErr = "error parsing github event: %v"
-	ErrInvalidConfig     BotErr = "error parsing config file: %v"
-	ErrCreatingBot       BotErr = "error creating telegram bot: %v"
-	ErrUnhandledEvent    BotErr = "error unhandled event: %v"
-	ErrParsePayload      BotErr = "error parsing payload: %v"
+	ErrInvalidUrl     BotErr = "error parsing target org url %s: invalid url"
+	ErrCreateRequest  BotErr = "error creating request to %s: %v"
+	ErrSendingRequest BotErr = "error sending request to %s: %v"
+	ErrRespBody       BotErr = "error parsing github event: %v"
+	ErrInvalidConfig  BotErr = "error parsing environment variable: %v"
+	ErrCreatingBot    BotErr = "error creating telegram bot: %v"
+	ErrUnhandledEvent BotErr = "error unhandled event: %v"
+	ErrParsePayload   BotErr = "error parsing payload: %v"
 )
 
 func (b BotErr) Desc(args ...interface{}) BotErr {

@@ -1,26 +1,24 @@
 package main
 
 import (
+	"fmt"
 	"github.com/Skycoin/git-telegram-bot/internal/config"
 	"github.com/Skycoin/git-telegram-bot/pkg/errutil"
 	"github.com/Skycoin/git-telegram-bot/pkg/githandler"
 	tb "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 	"log"
-	"os"
 	"time"
 )
 
 func main() {
-	logger := log.New(os.Stdout, "skygit-bot", log.LstdFlags)
-
 	cfg, err := config.NewBotConfig()
 	if err != nil {
-		logger.Fatal(err)
+		log.Fatal(err)
 	}
 
 	bot, err := tb.NewBotAPI(cfg.TgBotToken)
 	if err != nil {
-		logger.Fatal(errutil.ErrCreatingBot.Desc(err))
+		log.Fatal(errutil.ErrCreatingBot.Desc(err))
 	}
 
 	bot.Debug = true
@@ -34,7 +32,7 @@ func main() {
 	stopCh := make(chan struct{})
 	var previousEventId string
 	var currentEventId string
-	ticker := time.NewTicker(10 * time.Second)
+	ticker := time.NewTicker(61 * time.Second)
 
 	for update := range updates {
 		userIsAdmin := false
@@ -58,7 +56,7 @@ func main() {
 			case "start": // starts the poller
 				msg := tb.NewMessage(chatId, "starting Skycoin poll github events...")
 				if _, e := bot.Send(msg); err != nil {
-					logger.Printf("error sending start message: %v", e)
+					fmt.Printf("error sending start message: %v", e)
 					continue
 				}
 				go func() {
@@ -68,10 +66,10 @@ func main() {
 							ticker.Stop()
 							break
 						case <-ticker.C:
-							if err = githandler.HandleStartCommand(
+							previousEventId, err = githandler.HandleStartCommand(
 								previousEventId,
 								currentEventId,
-								logger, cfg.TargetOrgUrl,
+								cfg.TargetOrgUrl,
 								func(s string) error {
 									msg = tb.NewMessage(chatId, s)
 									if _, e := bot.Send(msg); err != nil {
@@ -79,8 +77,9 @@ func main() {
 									}
 									return nil
 								},
-							); err != nil {
-								logger.Print(err)
+							)
+							if err != nil {
+								fmt.Print(err)
 								continue
 							}
 						}
@@ -90,7 +89,7 @@ func main() {
 				stopCh <- struct{}{}
 				msg := tb.NewMessage(chatId, "stopping bot, you can use /reset then /start command to start it again")
 				if _, err = bot.Send(msg); err != nil {
-					logger.Printf("error sending message: %v", err)
+					fmt.Printf("error sending message: %v", err)
 				}
 			case "help": // displays help message
 				msg := tb.NewMessage(chatId, `
@@ -100,10 +99,10 @@ Hi, here's my list of commands:
 	/reset: resets the poller, use with /start after /stop to restart polling event.
 `)
 				if _, err = bot.Send(msg); err != nil {
-					logger.Printf("error sending message: %v", err)
+					fmt.Printf("error sending message: %v", err)
 				}
 			case "reset":
-				ticker = time.NewTicker(10 * time.Second)
+				ticker = time.NewTicker(61 * time.Second)
 			}
 		}
 

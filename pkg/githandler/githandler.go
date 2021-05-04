@@ -4,9 +4,8 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	errutil2 "github.com/Skycoin/git-telegram-bot/pkg/errutil"
+	"github.com/Skycoin/git-telegram-bot/pkg/errutil"
 	gh "github.com/google/go-github/v32/github"
-	"log"
 	"net/http"
 	"time"
 )
@@ -26,14 +25,13 @@ const (
 func HandleStartCommand(
 	previousEventId string,
 	currentEventId string,
-	logger *log.Logger,
 	ghUrl string,
 	sendFunc func(string) error,
-) error {
+) (string, error) {
 	var curEvt gh.Event
 	res, err := fetchGhEvent(ghUrl)
 	if err != nil {
-		return err
+		return "", err
 	}
 	// skip if current event is the same as previous event
 	if previousEventId == "" && res != nil {
@@ -44,26 +42,26 @@ func HandleStartCommand(
 		curEvt = res[0]
 	}
 	if currentEventId == previousEventId {
-		return nil
+		return previousEventId, nil
 	}
 
 	msgText, err := handleGithubEvent(curEvt)
 	if err != nil {
-		return err
+		return "", err
 	}
 
-	logger.Printf("%s sent %s", time.Now().UTC().String(), msgText)
+	fmt.Printf("%s sent %s", time.Now().UTC().String(), msgText)
 	if err = sendFunc(msgText); err != nil {
-		return fmt.Errorf("error sending message: %v", err)
+		return previousEventId, fmt.Errorf("error sending message: %v", err)
 	}
-	return nil
+	return previousEventId, nil
 }
 
 // handleGithubEvent takes current event and return message in a string format
 func handleGithubEvent(curEvt gh.Event) (string, error) {
 	payload, err := curEvt.ParsePayload()
 	if err != nil {
-		return "", errutil2.ErrParsePayload.Desc(err)
+		return "", errutil.ErrParsePayload.Desc(err)
 	}
 
 	var msgText string
@@ -137,29 +135,31 @@ func handleGithubEvent(curEvt gh.Event) (string, error) {
 			evt.GetRelease().GetHTMLURL(),
 		)
 	default:
-		return "", errutil2.ErrUnhandledEvent.Desc(curEvt.GetType())
+		return "", errutil.ErrUnhandledEvent.Desc(curEvt.GetType())
 	}
 	return msgText, nil
 }
 
 // fetchGhEvent fetches event from an org in github
 func fetchGhEvent(ghUrl string) ([]gh.Event, error) {
-	hc := http.Client{
+	httpClient := http.Client{
 		Timeout: defaultRequestTimeout,
 	}
 	req, err := http.NewRequest(http.MethodGet, ghUrl, nil)
 	if err != nil {
-		return nil, errutil2.ErrCreateRequest.Desc(ghUrl, err)
+		return nil, errutil.ErrCreateRequest.Desc(ghUrl, err)
 	}
 
-	res, err := hc.Do(req)
+	req.Header.Set("User-Agent", "curl/7.64.1")
+
+	res, err := httpClient.Do(req)
 	if err != nil {
-		return nil, errutil2.ErrSendingRequest.Desc(ghUrl, err)
+		return nil, errutil.ErrSendingRequest.Desc(ghUrl, err)
 	}
 
 	var ghEvt []gh.Event
 	if err = json.NewDecoder(res.Body).Decode(&ghEvt); err != nil {
-		return nil, errutil2.ErrRespBody.Desc(err)
+		return nil, errutil.ErrRespBody.Desc(err)
 	}
 	_ = res.Body.Close()
 	return ghEvt, nil
