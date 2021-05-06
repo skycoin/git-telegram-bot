@@ -53,25 +53,25 @@ To operate on the bot, you have to be an administrator to the group you configur
 To actually run the bot, type:
 
 ```
-/start-poll
+/startpoll@NAME_OF_YOUR_BOT
 ```
 
 To stop the bot, type:
 
 ```
-/stop-poll
+/stoppoll@NAME_OF_YOUR_BOT
 ```
 
 To restart the bot, type:
 
 ```bash
-/reset-poll
+/resetpoll@NAME_OF_YOUR_BOT
 # then
-/start-poll
+/startpoll@NAME_OF_YOUR_BOT
 ```
 
 To view its help menu, type:
 
 ```
-/help-poll
+/helppoll@NAME_OF_YOUR_BOT
 ```
