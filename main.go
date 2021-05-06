@@ -52,7 +52,7 @@ func main() {
 
 		if update.Message.IsCommand() {
 			switch update.Message.Command() {
-			case "start": // starts the poller
+			case "start-poll": // starts the poller
 				msg := tb.NewMessage(chatId, "starting Skycoin poll github events...")
 				if _, e := bot.Send(msg); err != nil {
 					fmt.Printf("error sending start message: %v", e)
@@ -84,23 +84,23 @@ func main() {
 						}
 					}
 				}()
-			case "stop": // stops it
+			case "stop-poll": // stops it
 				stopCh <- struct{}{}
 				msg := tb.NewMessage(chatId, "stopping bot, you can use /reset then /start command to start it again")
 				if _, err = bot.Send(msg); err != nil {
 					fmt.Printf("error sending message: %v", err)
 				}
-			case "help": // displays help message
+			case "help-poll": // displays help message
 				msg := tb.NewMessage(chatId, `
 Hi, here's my list of commands:
-	/start: starts polling events from github
-	/stop: stops the poller
-	/reset: resets the poller, use with /start after /stop to restart polling event.
+	/start-poll: starts polling events from github
+	/stop-poll: stops the poller
+	/reset-poll: resets the poller, use with /start after /stop to restart polling event.
 `)
 				if _, err = bot.Send(msg); err != nil {
 					fmt.Printf("error sending message: %v", err)
 				}
-			case "reset":
+			case "reset-poll":
 				ticker = time.NewTicker(61 * time.Second)
 			}
 		}
