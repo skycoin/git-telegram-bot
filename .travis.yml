@@ -2,6 +2,8 @@ dist: bionic
 language: go
 go:
   - 1.16.x
+services:
+  - docker
 git:
   depth: 1
 
@@ -12,3 +14,15 @@ before_script:
 
 script:
   - make all
+
+deploy:
+  - provider: script
+    script: bash ./ci_scripts/docker-push.sh -t "$TRAVIS_BRANCH" -p
+    on:
+      branch: master
+      condition: $TRAVIS_PULL_REQUEST = false
+  - provider: script
+    script: bash ./ci_scripts/docker-push.sh -t "$TRAVIS_BRANCH" -p
+    on:
+      branch: develop
+      condition: $TRAVIS_PULL_REQUEST = false
